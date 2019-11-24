@@ -1,0 +1,36 @@
+{
+  "name": "ra-stats-viewer",
+  "version": "410.0",
+  "private": true,
+  "dependencies": {
+    "@material-ui/core": "latest",
+    "@types/luxon": "^1.21.0",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "@types/recharts": "^1.8.3",
+    "luxon": "^1.21.2",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-scripts": "latest",
+    "recharts": "^1.8.5",
+    "typescript": "latest"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
