@@ -61,17 +61,17 @@ function Benchmarks(props: BenchmarksProps) {
         let content_rows = [];
 
         if (props.tab === "0") {
-            content_rows.push(<TableCell className={classes.tablecell} align="right">{stat.declarations}</TableCell>);
-            content_rows.push(<TableCell className={classes.tablecell} align="right">{stat.functions}</TableCell>);
-            content_rows.push(<TableCell className={classes.tablecell} align="right">{stat.expressions}</TableCell>);
-            content_rows.push(<TableCell className={classes.tablecell} align="right">{stat.unknown_types} ({percent_expr(stat.unknown_types)})</TableCell>);
-            content_rows.push(<TableCell className={classes.tablecell} align="right">{stat.partial_unknown_types} ({percent_expr(stat.partial_unknown_types)})</TableCell>);
-            content_rows.push(<TableCell className={classes.tablecell} align="right">{stat.type_mismatches}</TableCell>);
-        } else {
-            content_rows.push(<TableCell className={classes.tablecell} align="right">{Math.floor(stat.database_loaded_time.milliseconds)}</TableCell>);
-            content_rows.push(<TableCell className={classes.tablecell} align="right">{Math.floor(stat.item_collection_time.milliseconds)}</TableCell>);
-            content_rows.push(<TableCell className={classes.tablecell} align="right">{Math.floor(stat.inferenece_time.milliseconds)}</TableCell>);
-            content_rows.push(<TableCell className={classes.tablecell} align="right">{Math.floor(stat.total_time.milliseconds)}</TableCell>);
+            content_rows.push(<TableCell className={classes.tablecell} align="right" key="c0">{stat.declarations}</TableCell>);
+            content_rows.push(<TableCell className={classes.tablecell} align="right" key="c1">{stat.functions}</TableCell>);
+            content_rows.push(<TableCell className={classes.tablecell} align="right" key="c2">{stat.expressions}</TableCell>);
+            content_rows.push(<TableCell className={classes.tablecell} align="right" key="c3">{stat.unknown_types} ({percent_expr(stat.unknown_types)})</TableCell>);
+            content_rows.push(<TableCell className={classes.tablecell} align="right" key="c4">{stat.partial_unknown_types} ({percent_expr(stat.partial_unknown_types)})</TableCell>);
+            content_rows.push(<TableCell className={classes.tablecell} align="right" key="c5">{stat.type_mismatches}</TableCell>);
+        } else { 
+            content_rows.push(<TableCell className={classes.tablecell} align="right" key="c6">{Math.floor(stat.database_loaded_time.milliseconds)}</TableCell>);
+            content_rows.push(<TableCell className={classes.tablecell} align="right" key="c7">{Math.floor(stat.item_collection_time.milliseconds)}</TableCell>);
+            content_rows.push(<TableCell className={classes.tablecell} align="right" key="c8">{Math.floor(stat.inferenece_time.milliseconds)}</TableCell>);
+            content_rows.push(<TableCell className={classes.tablecell} align="right" key="c9">{Math.floor(stat.total_time.milliseconds)}</TableCell>);
         }
 
         return (<TableRow key={stat.project_name}>
@@ -101,24 +101,24 @@ function Benchmarks(props: BenchmarksProps) {
 
     let headers = []
     if (props.tab === "0") {
-        headers.push(<TableCell className={classes.tablecell} align="right">Decl</TableCell>);
-        headers.push(<TableCell className={classes.tablecell} align="right">Func</TableCell>);
-        headers.push(<TableCell className={classes.tablecell} align="right">Expr</TableCell>);
-        headers.push(<TableCell className={classes.tablecell} align="right">Unknown</TableCell>);
-        headers.push(<TableCell className={classes.tablecell} align="right">Partial</TableCell>);
-        headers.push(<TableCell className={classes.tablecell} align="right">Mismatches</TableCell>);
+        headers.push(<TableCell className={classes.tablecell} align="right" key="0">Decl</TableCell>);
+        headers.push(<TableCell className={classes.tablecell} align="right" key="1">Func</TableCell>);
+        headers.push(<TableCell className={classes.tablecell} align="right" key="2">Expr</TableCell>);
+        headers.push(<TableCell className={classes.tablecell} align="right" key="3">Unknown</TableCell>);
+        headers.push(<TableCell className={classes.tablecell} align="right" key="4">Partial</TableCell>);
+        headers.push(<TableCell className={classes.tablecell} align="right" key="5">Mismatches</TableCell>);
     } else {
-        headers.push(<TableCell className={classes.tablecell} align="right">Database Loaded(ms)</TableCell>);
-        headers.push(<TableCell className={classes.tablecell} align="right">Items(ms)</TableCell>);
-        headers.push(<TableCell className={classes.tablecell} align="right">Inference(ms)</TableCell>);
-        headers.push(<TableCell className={classes.tablecell} align="right">Total(ms)</TableCell>);
+        headers.push(<TableCell className={classes.tablecell} align="right" key="6">Database Loaded(ms)</TableCell>);
+        headers.push(<TableCell className={classes.tablecell} align="right" key="7">Items(ms)</TableCell>);
+        headers.push(<TableCell className={classes.tablecell} align="right" key="8">Inference(ms)</TableCell>);
+        headers.push(<TableCell className={classes.tablecell} align="right" key="9">Total(ms)</TableCell>);
     }
 
     return (
-        <Container>
+        <Container key={props.commit.commit_sha}>
             <Box display="flex" p={1}>
                 <Box flexGrow={1}>
-                    <p>Commit SHA: {props.commit.commit_sha}</p>
+                    <p><a href={"https://github.com/rust-analyzer/rust-analyzer/commit/" + props.commit.commit_sha}>{"@" + props.commit.commit_sha}</a></p>
                     <Box display="flex">
                         <Box className={classes.detail}><small>Timestamp: {props.commit.timestamp}</small></Box>
                         <Box className={classes.detail}><small>Total Expression: {total_expresions}</small></Box> 
@@ -164,7 +164,7 @@ function Benchmarks(props: BenchmarksProps) {
 }
 
 interface MainUnitProps {
-    commits: CommitStat[];
+    commits: Array<CommitStat>
 }
 
 export default function MainUnit(props: MainUnitProps) {

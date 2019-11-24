@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
@@ -38,7 +38,7 @@ export default function App() {
     <Container maxWidth="lg">
       <Box my={4} >
         <Typography variant="h4" component="h1" gutterBottom>
-          RA Stats Viewer
+          RA Analyze Stats
         </Typography>
 
         <Container maxWidth="lg" className={classes.container}>
