@@ -2,6 +2,7 @@
   "name": "ra-stats-viewer",
   "version": "410.0",
   "private": true,
+  "homepage": "https://edwin0cheng.github.io/github-action-usage-test",
   "dependencies": {
     "@material-ui/core": "latest",
     "@types/luxon": "^1.21.0",
