@@ -8,6 +8,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { Container, Box, FormControl, RadioGroup, FormControlLabel, Radio } from '@material-ui/core';
 import {CommitStat, Stats} from './commitStats';
+import {DateTime} from 'luxon';
 
 const useStyles = makeStyles({
     root: {
@@ -113,6 +114,9 @@ function Benchmarks(props: BenchmarksProps) {
         headers.push(<TableCell className={classes.tablecell} align="right" key="8">Inference(ms)</TableCell>);
         headers.push(<TableCell className={classes.tablecell} align="right" key="9">Total(ms)</TableCell>);
     }
+        
+    const time = DateTime.fromSeconds(props.commit.timestamp);
+    const formattedTime = time.toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS);
 
     return (
         <Container key={props.commit.commit_sha}>
@@ -120,7 +124,7 @@ function Benchmarks(props: BenchmarksProps) {
                 <Box flexGrow={1}>
                     <p><a href={"https://github.com/rust-analyzer/rust-analyzer/commit/" + props.commit.commit_sha}>{"@" + props.commit.commit_sha}</a></p>
                     <Box display="flex">
-                        <Box className={classes.detail}><small>Timestamp: {props.commit.timestamp}</small></Box>
+                        <Box className={classes.detail}><small>Commit Time: {formattedTime}</small></Box>
                         <Box className={classes.detail}><small>Total Expression: {total_expresions}</small></Box> 
                         <Box className={classes.detail}><small>Total Unknown + Partial: {total_unknown} ({percent(total_unknown, total_expresions)})</small></Box> 
                     </Box>

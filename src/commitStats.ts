@@ -92,7 +92,7 @@ export const fetchCommits = async function (): Promise<CommitStat[]> {
         let stats = await fetchStats(key);
         
         commits.push({
-            timestamp: value as number,
+            timestamp: parseInt("" + value) as number,
             commit_sha: key,
             stats,
             totalExpressions: totalExpressions(stats),
@@ -104,6 +104,6 @@ export const fetchCommits = async function (): Promise<CommitStat[]> {
 
     // Sort by timestamp    
     return commits.sort((a,b) => {
-        return a.timestamp - b.timestamp
+        return b.timestamp - a.timestamp
     })
 }
