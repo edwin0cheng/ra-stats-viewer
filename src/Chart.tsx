@@ -1,5 +1,5 @@
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer, BarChart, Bar } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer } from 'recharts';
 import { CommitStat } from './commitStats';
 import { makeStyles } from '@material-ui/styles';
 
@@ -18,6 +18,10 @@ export default function Chart(props: ChartProps) {
     const commits = [...props.commits];
     commits.reverse();
 
+    const tickFormatter = (data:string) : string => {
+        return data;
+    }
+
     return (
         <React.Fragment>
             <ResponsiveContainer className={classes.container}>
@@ -30,10 +34,10 @@ export default function Chart(props: ChartProps) {
                         left: 24,
                     }}
                 >
-                    <XAxis dataKey="commit_sha"/>
+                    <XAxis dataKey="commit_sha" interval={0} tickFormatter={tickFormatter}  angle={90} dy={33} dx={7} height={100}/>
                     <YAxis  unit="%">
                         <Label angle={270} position="left" style={{ textAnchor: 'middle' }}>
-                            Error Rate
+                            Unknown + Partial
                         </Label>
                     </YAxis>
                     {/* <Bar dataKey="totalUnknown" fill="#8884d8" /> */}

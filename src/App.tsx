@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import Container from '@material-ui/core/Container';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.spacing(4),
   },
   paper: {
-    height: '240px',
+    height: '320px',
   }
 }))
 

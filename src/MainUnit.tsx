@@ -131,7 +131,7 @@ function Benchmarks(props: BenchmarksProps) {
     const formattedTime = time.toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS);
     const refID = props.commit.commit_sha;
 
-    return (
+    return (        
         <Container key={props.commit.commit_sha}>
             <Box display="flex" p={1}>
                 <Box flexGrow={1}>
@@ -191,6 +191,14 @@ export default function MainUnit(props: MainUnitProps) {
     const handleTabChange = (newValue: string): void => {
         setValue(newValue);
     };
+
+    if (props.commits.length === 0) {
+        return (
+            <div className={classes.root}>
+                <p> Loading ...</p>
+            </div>
+        )
+    }
 
     return (
         <div className={classes.root}>
