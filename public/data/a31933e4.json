@@ -1,0 +1,70 @@
+[
+    {
+        "database_loaded_time": "8.57551014s",
+        "error": "fail to parse output",
+        "project_name": "./rustc-perf/collector/benchmarks/cargo/",
+        "roots": 132
+    },
+    {
+        "database_loaded_time": "739.021842ms",
+        "error": "fail to parse output",
+        "project_name": "./rustc-perf/collector/benchmarks/clap-rs/",
+        "roots": 77
+    },
+    {
+        "database_loaded_time": "1.701485677s",
+        "error": "fail to parse output",
+        "project_name": "./rustc-perf/collector/benchmarks/cranelift-codegen/",
+        "roots": 132
+    },
+    {
+        "crates": 1,
+        "database_loaded_time": "2.289200581s",
+        "declarations": 1470,
+        "expressions": 6740,
+        "functions": 241,
+        "inferenece_time": "2.777193072s",
+        "item_collection_time": "1.437294885s",
+        "modules": 55,
+        "partial_unknown_types": 1636,
+        "project_name": "./rustc-perf/collector/benchmarks/futures/",
+        "roots": 16,
+        "total_time": "4.214497257s",
+        "type_mismatches": 18,
+        "unknown_types": 1581
+    },
+    {
+        "crates": 1,
+        "database_loaded_time": "60.399583ms",
+        "declarations": 18,
+        "expressions": 5,
+        "functions": 1,
+        "inferenece_time": "1.050907ms",
+        "item_collection_time": "1.347646439s",
+        "modules": 1,
+        "partial_unknown_types": 0,
+        "project_name": "./rustc-perf/collector/benchmarks/helloworld/",
+        "roots": 15,
+        "total_time": "1.348704746s",
+        "type_mismatches": 0,
+        "unknown_types": 3
+    },
+    {
+        "database_loaded_time": "674.246563ms",
+        "error": "fail to parse output",
+        "project_name": "./rustc-perf/collector/benchmarks/html5ever/",
+        "roots": 56
+    },
+    {
+        "database_loaded_time": "873.288893ms",
+        "error": "fail to parse output",
+        "project_name": "./rustc-perf/collector/benchmarks/hyper/",
+        "roots": 51
+    },
+    {
+        "database_loaded_time": "1.007441183s",
+        "error": "fail to parse output",
+        "project_name": "./rustc-perf/collector/benchmarks/syn/",
+        "roots": 58
+    }
+]
