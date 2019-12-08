@@ -14,6 +14,7 @@
     "react-dom": "latest",
     "react-scripts": "latest",
     "recharts": "^1.8.5",
+    "serialize-javascript": "2.1.1",
     "typescript": "latest"
   },
   "scripts": {
