@@ -4,18 +4,19 @@
   "private": true,
   "homepage": "https://edwin0cheng.github.io/github-action-usage-test",
   "dependencies": {
-    "@material-ui/core": "latest",
+    "@material-ui/core": "^4.9.3",
+    "@material-ui/lab": "^4.0.0-alpha.43",
     "@types/luxon": "^1.21.0",
-    "@types/react": "latest",
-    "@types/react-dom": "latest",
+    "@types/react": "^16.9.22",
+    "@types/react-dom": "^16.9.5",
     "@types/recharts": "^1.8.3",
     "luxon": "^1.21.2",
     "react": "latest",
     "react-dom": "latest",
-    "react-scripts": "latest",
+    "react-scripts": "^3.4.0",
     "recharts": "^1.8.5",
     "serialize-javascript": "2.1.1",
-    "typescript": "latest"
+    "typescript": "^3.8.2"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -34,5 +35,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/node": "^13.7.4"
   }
 }

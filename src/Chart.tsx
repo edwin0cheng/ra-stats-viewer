@@ -1,6 +1,6 @@
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer } from 'recharts';
-import { CommitStat } from './commitStats';
+import { CommitHistory } from './commitStats';
 import { makeStyles } from '@material-ui/styles';
 
 const useStyles = makeStyles(theme => ({
@@ -10,12 +10,12 @@ const useStyles = makeStyles(theme => ({
   }))
 
 interface ChartProps {
-    commits: CommitStat[]
+    history: CommitHistory
 }
 
 export default function Chart(props: ChartProps) {
     const classes = useStyles();
-    const commits = [...props.commits];
+    const commits = [...props.history.commits];
     commits.reverse();
 
     const tickFormatter = (data:string) : string => {

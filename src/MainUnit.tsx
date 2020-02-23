@@ -7,7 +7,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import { Container, Box, FormControl, RadioGroup, FormControlLabel, Radio } from '@material-ui/core';
-import {CommitStat, StatsOrError} from './commitStats';
+import {CommitStat, StatsOrError, CommitResult} from './commitStats';
 import {DateTime} from 'luxon';
 
 const useStyles = makeStyles({
@@ -24,7 +24,7 @@ const useStyles = makeStyles({
 });
 
 interface BenchmarksProps {
-    commit: CommitStat,
+    stat: CommitResult,
     setTab: (tab: string) => void,
     tab: string,
 }
@@ -39,6 +39,24 @@ function Benchmarks(props: BenchmarksProps) {
             paddingRight: '1em'
         }
     })()
+
+    const [commit, setCommit] = React.useState(
+        null as CommitStat | null
+    );
+
+    React.useEffect(() => {
+        async function fetchData() {
+            const commitStat = await props.stat.fetch();
+            setCommit(commitStat);            
+        }
+        fetchData()
+    }, [props.stat])
+
+    if (commit === null) {
+        return <div>
+            <p> Loading ... {props.stat.sha} </p>
+        </div>;
+    }
 
     const shortName = function (str: string): string {
         var base = str.substring(0, str.length - 1)
@@ -99,7 +117,7 @@ function Benchmarks(props: BenchmarksProps) {
 
     const rows = function () {
         let rows = [];
-        for (let stat of props.commit.stats) {
+        for (let stat of commit.stats) {
             rows.push(row(stat))
         }
         return rows;
@@ -109,8 +127,8 @@ function Benchmarks(props: BenchmarksProps) {
         props.setTab(event.target.value);
     };
 
-    let total_expresions = props.commit.totalExpressions
-    let total_unknown = props.commit.totalPartial + props.commit.totalUnknown;
+    let total_expresions = commit.totalExpressions
+    let total_unknown = commit.totalPartial + commit.totalUnknown;
 
     let headers = []
     if (props.tab === "0") {
@@ -127,15 +145,15 @@ function Benchmarks(props: BenchmarksProps) {
         headers.push(<TableCell className={classes.tablecell} align="right" key="9">Total(ms)</TableCell>);
     }
         
-    const time = DateTime.fromSeconds(props.commit.timestamp);
+    const time = DateTime.fromSeconds(commit.timestamp);
     const formattedTime = time.toLocaleString(DateTime.DATETIME_SHORT_WITH_SECONDS);
-    const refID = props.commit.commit_sha;
+    const refID = commit.commit_sha;
 
     return (        
-        <Container key={props.commit.commit_sha}>
+        <Container key={commit.commit_sha}>
             <Box display="flex" p={1}>
                 <Box flexGrow={1}>
-                    <p id={refID}><a href={"https://github.com/rust-analyzer/rust-analyzer/commit/" + props.commit.commit_sha}>{"@" + props.commit.commit_sha}</a></p>
+                    <p id={refID}><a href={"https://github.com/rust-analyzer/rust-analyzer/commit/" + commit.commit_sha}>{"@" + commit.commit_sha}</a></p>
                     <Box display="flex">
                         <Box className={classes.detail}><small>Commit Time: {formattedTime}</small></Box>
                         <Box className={classes.detail}><small>Total Expression: {total_expresions}</small></Box> 
@@ -181,7 +199,7 @@ function Benchmarks(props: BenchmarksProps) {
 }
 
 interface MainUnitProps {
-    commits: Array<CommitStat>
+    stats: Array<CommitResult>
 }
 
 export default function MainUnit(props: MainUnitProps) {
@@ -192,7 +210,7 @@ export default function MainUnit(props: MainUnitProps) {
         setValue(newValue);
     };
 
-    if (props.commits.length === 0) {
+    if (props.stats.length === 0) {
         return (
             <div className={classes.root}>
                 <p> Loading ...</p>
@@ -202,9 +220,9 @@ export default function MainUnit(props: MainUnitProps) {
 
     return (
         <div className={classes.root}>
-            {props.commits.map((commit) =>
-                <Paper className={classes.paper} key={commit.commit_sha}>
-                    <Benchmarks commit={commit} setTab={handleTabChange} tab={value} />
+            {props.stats.map((stat) =>
+                <Paper className={classes.paper} key={stat.sha}>
+                    <Benchmarks stat={stat} setTab={handleTabChange} tab={value} />
                 </Paper>
             )}
         </div>

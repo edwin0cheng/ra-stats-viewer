@@ -1,5 +1,12 @@
 import { Duration } from 'luxon';
 
+let ROOT_PATH = ".";
+if (process.env.NODE_ENV !== 'production') {
+    ROOT_PATH = 'https://edwin0cheng.github.io/github-action-usage-test/';
+}
+
+export const PAGE_COMMITS_COUNT = 50;
+
 export interface CommitStat {
     timestamp: number,
     commit_sha: string,
@@ -37,14 +44,93 @@ export interface Stats {
 
 export type StatsOrError = Stats | Error;
 
+const parseTime = function (s: string): number {
+    if (s.endsWith("ms")) {
+        return parseFloat(s.substring(0, s.length - 2))
+    }
+    return parseFloat(s.substring(0, s.length - 1)) * 1000
+}
+
+type HistoryCallback = (arg: CommitHistory | [number,number]) => void;
+
+export class CommitHistory {
+    commits: Array<CommitStat> = [];
+    nCommits: number | null = null;
+    cb: HistoryCallback | null = null;
+
+    subscribe(cb: HistoryCallback) {
+        this.cb = cb;
+    }
+
+    setCommitCount(n: number) {
+        this.nCommits = n;
+        this.commits = [];        
+    }
+
+    add(stat: CommitStat) {
+        this.commits.push(stat);
+        this.commits.sort((a, b) => {
+            return b.timestamp - a.timestamp;
+        });
+
+        if(this.nCommits === null || this.cb === null) {
+            return;
+        }
+
+        if (this.commits.length < this.nCommits) {            
+            this.cb([this.commits.length, this.nCommits]);  
+            return;
+        }
+
+        this.cb(this);
+    }
+}
+
+export class CommitResult {
+    constructor(readonly sha: string, readonly timestamp: number, private history: CommitHistory) {
+    }
+
+    async fetch(): Promise<CommitStat> {
+        const res = await fetch(ROOT_PATH + '/data/' + this.sha + '.json')
+        const json = await res.json()
+        let stats = json.map((s: any) => {
+            if (s.error) {
+                s.kind = "error";
+                s.msg = s.error;
+            } else {
+                s.kind = "stats";
+                s.database_loaded_time = Duration.fromMillis(parseTime(s.database_loaded_time))
+                s.inferenece_time = Duration.fromMillis(parseTime(s.inferenece_time))
+                s.item_collection_time = Duration.fromMillis(parseTime(s.item_collection_time))
+                s.total_time = Duration.fromMillis(parseTime(s.total_time))
+            }
+            return s
+        });
+
+        let result = {
+            timestamp: this.timestamp,
+            commit_sha: this.sha,
+            stats,
+            totalExpressions: totalExpressions(stats),
+            totalUnknown: totalUnknown(stats),
+            totalPartial: totalPartial(stats),
+            errorRate: errorRate(stats),
+        };
+
+        this.history.add(result);
+
+        return result;
+    }
+}
+
 function totalExpressions(stats: StatsOrError[]): number {
-    let total_expresions = 0;
+    let total_expressions = 0;
     for (let stat of stats) {
         if (stat.kind === "stats") {
-            total_expresions += stat.expressions;
+            total_expressions += stat.expressions;
         }
     }
-    return total_expresions;
+    return total_expressions;
 }
 
 function totalUnknown(stats: StatsOrError[]): number {
@@ -75,72 +161,36 @@ function errorRate(stats: StatsOrError[]): number {
     return (totalError / exprs) * 100.0
 }
 
-export const fetchCommits = async function (): Promise<CommitStat[]> {
-    const res = await fetch('./data/commits.json')
-    const json = await res.json()
-    let commits: CommitStat[] = [];
+let wholeHistory: CommitHistory = new CommitHistory();
 
-    const parseTime = function (s: string): number {
-        if (s.endsWith("ms")) {
-            return parseFloat(s.substring(0, s.length - 2))
-        }
+export const fetchCommits = async function (start: number): Promise<[number, CommitResult[]]> {
+    let commitsSource = ROOT_PATH + '/data/commits.json';
 
-        return parseFloat(s.substring(0, s.length - 1)) * 1000
-    }
+    const res = await fetch(commitsSource);
+    const json = await res.json();
+    const entries = Object.entries(json.commits);
 
-    const fetchStats = async function (sha: string): Promise<StatsOrError[]> {
-        const res = await fetch('./data/' + sha + '.json')
-        const json = await res.json()
-        return json.map((s: any) => {
-            if (s.error) {
-                s.kind = "error";
-                s.msg = s.error;
-            } else {
-                s.kind = "stats";
-                s.database_loaded_time = Duration.fromMillis(parseTime(s.database_loaded_time))
-                s.inferenece_time = Duration.fromMillis(parseTime(s.inferenece_time))
-                s.item_collection_time = Duration.fromMillis(parseTime(s.item_collection_time))
-                s.total_time = Duration.fromMillis(parseTime(s.total_time))
-            }
+    let shaList: Array<CommitResult> = entries.map(([key, value]) => {
+        return new CommitResult(key, parseInt("" + value) as number, wholeHistory!);
+    });
+    shaList.sort((a, b) => {
+        return b.timestamp - a.timestamp;
+    });
+    const totalCount = shaList.length;
+    shaList = shaList.slice(start, start + PAGE_COMMITS_COUNT);
+    wholeHistory.setCommitCount(shaList.length);
+    
 
-            return s
-        })
-    }
+    // if (window.location.hash) {
+    //     // Scroll to hash after 0.5 sec
+    //     setTimeout(() => {
+    //         console.log(window.location.hash)
+    //         document!.getElementById(window.location.hash.substr(1))!.scrollIntoView();
+    //     }, 0.5)
+    // }
+    return [totalCount, shaList];
+}
 
-    let promises = [];
-    let shaList: Array<[string, string]> = [];
-
-    for (let [key, value] of Object.entries(json.commits)) {
-        promises.push(fetchStats(key));
-        shaList.push([key, value as string]);
-    }
-
-    let allStats = await Promise.all(promises);
-    for (let i = 0; i < shaList.length; i++) {
-        const [key, value] = shaList[i];
-        const stats = allStats[i];
-
-        commits.push({
-            timestamp: parseInt("" + value) as number,
-            commit_sha: key,
-            stats,
-            totalExpressions: totalExpressions(stats),
-            totalUnknown: totalUnknown(stats),
-            totalPartial: totalPartial(stats),
-            errorRate: errorRate(stats),
-        })
-
-    }
-
-    if (window.location.hash) {
-        // Scroll to hash after 0.5 sec
-        setTimeout(() => {
-            console.log(window.location.hash)
-            document!.getElementById(window.location.hash.substr(1))!.scrollIntoView();
-        }, 0.5)
-    }
-    // Sort by timestamp    
-    return commits.sort((a, b) => {
-        return b.timestamp - a.timestamp
-    })
+export function subscribeHistory(cb : HistoryCallback ) {
+    wholeHistory.subscribe(cb);
 }
